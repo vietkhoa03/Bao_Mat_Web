@@ -49,24 +49,28 @@ public class WebHomeControllers extends HttpServlet {
 
 	private void getLogout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
-		session.removeAttribute("account");
+	    session.removeAttribute("account");
 
-		Cookie[] cookies = req.getCookies();
+	    Cookie[] cookies = req.getCookies();
 
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (Constant.COOKIE_REMEBER.equals(cookie.getName())) {
-					// Sanitize the cookie value to remove potential CRLF characters
-					String sanitizedValue = InputSanitizer.sanitizeCookieValue(cookie.getValue());
-				    cookie.setValue(sanitizedValue);
-                    
-					cookie.setMaxAge(0);
-					resp.addCookie(cookie);
-				}
-			}
-		}
+	    if (cookies != null) {
+	        for (Cookie cookie : cookies) {
+	            if (Constant.COOKIE_REMEBER.equals(cookie.getName())) {
+	                // Sanitize the cookie value to remove potential CRLF characters
+	                String sanitizedValue = InputSanitizer.sanitizeCookieValue(cookie.getValue());
+	                
+	                // Create a new cookie with the sanitized value
+	                Cookie sanitizedCookie = new Cookie(cookie.getName(), sanitizedValue);
+	                sanitizedCookie.setPath(cookie.getPath());
+	                sanitizedCookie.setMaxAge(0);
+	                
+	                // Replace the old cookie with the sanitized cookie
+	                resp.addCookie(sanitizedCookie);
+	            }
+	        }
+	    }
 
-		resp.sendRedirect(req.getContextPath() + "/user/home");
+	    resp.sendRedirect(req.getContextPath() + "/user/home");
 	}
 
 	@Override
