@@ -57,8 +57,8 @@ public class WebHomeControllers extends HttpServlet {
 			for (Cookie cookie : cookies) {
 				if (Constant.COOKIE_REMEBER.equals(cookie.getName())) {
 					// Sanitize the cookie value to remove potential CRLF characters
-					String sanitizedValue = InputSanitizer.sanitizeCookieValue(cookie.getValue());
-				    cookie.setValue(sanitizedValue);
+                    String sanitizedValue = InputSanitizer.sanitizeInput(cookie.getValue());
+                    cookie.setValue(sanitizedValue);
                     
 					cookie.setMaxAge(0);
 					resp.addCookie(cookie);
@@ -120,6 +120,7 @@ public class WebHomeControllers extends HttpServlet {
         String cookieHeader = String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=Strict; Secure", cookieName, cookieValue, cookiePath, maxAgeInSeconds);
         resp.addHeader("Set-Cookie", cookieHeader);
        }
+
 
 	private void postForgotPassword(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
